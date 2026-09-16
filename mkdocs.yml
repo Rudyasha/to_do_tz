@@ -1,0 +1,51 @@
+site_name: Todo · Тестирование приложения
+site_description: QA — приоритеты, тест-план, API-сценарии и баг-репорты Todo
+site_url: https://rudyasha.github.io/to_do_tz/
+repo_url: https://github.com/Rudyasha/to_do_tz
+repo_name: Rudyasha/to_do_tz
+theme:
+  name: material
+  language: ru
+  font: false
+  palette:
+    - scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Тёмная тема
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Светлая тема
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.footer
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+nav:
+  - Обзор: index.md
+  - 1. Приоритеты и риски: task-1.md
+  - 2. План Infinite Scroll: task-2.md
+  - 3. API-сценарии: task-3.md
+  - 4. Фильтрация: task-4.md
+  - 5. Баг-репорты: task-5.md
+plugins:
+  - search:
+      lang: ru
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+extra_css:
+  - assets/styles.css
