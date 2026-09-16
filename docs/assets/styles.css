@@ -29,3 +29,20 @@
 .md-typeset .case-tag.priority { color: #765005; background: #fff0ce; }
 @media (max-width: 600px) { .md-typeset .test-case { padding: .8rem; } }
 @media print { .md-typeset .test-case { break-inside: avoid; } }
+
+/* Shared report cards retain the reference layout in both color schemes. */
+.md-typeset .test-case { box-shadow: 0 3px 14px rgb(16 46 50 / 4%); }
+.md-typeset .test-case h2 { overflow-wrap: anywhere; line-height: 1.4; }
+.md-typeset .test-case > :last-child { margin-bottom: 0; }
+.md-typeset .case-tag.neutral { color: #285c83; background: #e8f1fb; }
+.md-typeset .bug-report { border-top: 3px solid #ba5961; }
+.md-typeset .result-panel { padding: .8rem 1rem; margin: 1rem 0; border-radius: 8px; border-left: 3px solid; }
+.md-typeset .result-panel h3 { margin-top: 0; }
+.md-typeset .result-panel > :last-child { margin-bottom: 0; }
+.md-typeset .result-panel.actual { border-color: #c35e68; background: rgb(195 94 104 / 7%); }
+.md-typeset .result-panel.expected { border-color: #168777; background: rgb(22 135 119 / 7%); }
+[data-md-color-scheme="slate"] .md-typeset .case-tag.positive { color: #a0e4c6; background: #203e35; }
+[data-md-color-scheme="slate"] .md-typeset .case-tag.negative { color: #ffb9bf; background: #482b33; }
+[data-md-color-scheme="slate"] .md-typeset .case-tag.priority { color: #f4d38b; background: #403820; }
+[data-md-color-scheme="slate"] .md-typeset .case-tag.neutral { color: #b5d9ff; background: #26394b; }
+@media (max-width: 600px) { .md-typeset .result-panel { padding: .7rem; } }

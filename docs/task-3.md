@@ -1,19 +1,27 @@
 # API: создание и изменение задач
 
+<div class="suite-summary" markdown>
+
+**POST · PUT · DELETE** `/todos`
+
+10 кейсов · контракт, границы и валидация
+
+</div>
+
 В исходном материале описана подготовка Postman-коллекции с помощью AI и ручная проверка сценариев через Postman и DevTools. Файл коллекции и результаты прогонов к материалу не приложены.
 
 !!! note "Контракт и допущения"
     Ограничение длины 255 символов и строгая валидация полей не подтверждены требованиями. Ожидания 400/422 в соответствующих кейсах условные: поведение тестового API следует фиксировать отдельно от дефектов приложения. Идентификаторы кейсов перенумерованы последовательно.
 
+<div class="test-case" markdown>
 
 ## TC-A01. POST /todos: создание задачи с валидными данными
 
+<div class="case-tags"><span class="case-tag positive">Positive / Contract</span><span class="case-tag priority">Приоритет: Critical</span></div>
 
 **Техника:** Positive / Contract testing.
 
-
-### Request
-
+### Тестовые данные
 
 ```json
 {
@@ -22,7 +30,6 @@
   "completed": false
 }
 ```
-
 
 ### Ожидаемый результат
 
@@ -33,18 +40,17 @@
 - title = "Buy milk";
 - completed = false.
 
-**Приоритет:** Critical
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-A02. POST /todos: минимальная длина title = "A"
 
+<div class="case-tags"><span class="case-tag positive">Positive / Boundary</span><span class="case-tag priority">Приоритет: Medium</span></div>
 
 **Техника:** Boundary Value Analysis.
 
-
-### Request
-
+### Тестовые данные
 
 ```json
 {
@@ -54,7 +60,6 @@
 }
 ```
 
-
 ### Ожидаемый результат
 
 - HTTP 201 Created;
@@ -62,21 +67,19 @@
 - title = "A";
 - остальные поля соответствуют request.
 
-**Приоритет:** Medium
-
-
 **Заметка:** Граничная проверка применима после подтверждения минимальной длины 1.
 
+</div>
 
+<div class="test-case" markdown>
 
 ## TC-A03. POST /todos: title со спецсимволами и Unicode
 
+<div class="case-tags"><span class="case-tag positive">Positive / Unicode</span><span class="case-tag priority">Приоритет: Medium</span></div>
 
 **Техника:** Equivalence Partitioning.
 
-
-### Request
-
+### Тестовые данные
 
 ```json
 {
@@ -86,7 +89,6 @@
 }
 ```
 
-
 ### Ожидаемый результат
 
 - HTTP 201 Created;
@@ -94,22 +96,19 @@
 - Unicode и спецсимволы не повреждены;
 - userId и completed не изменены.
 
-**Приоритет:** Medium
-
-
 **Заметка:** Ожидание применимо, если специальные символы разрешены требованиями.
 
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-A04. POST /todos: максимальная длина title, 255 и 256 символов
 
+<div class="case-tags"><span class="case-tag neutral">Exploratory / Boundary</span><span class="case-tag priority">Приоритет: Medium</span></div>
 
 **Техника:** Boundary Value Analysis.
 
-
 **Предусловие:** максимальная длина не определена требованиями. Для проверки используется допущение maxLength = 255.
-
 
 ### Шаги
 
@@ -126,20 +125,19 @@
 - ожидается HTTP 400 или 422, если ограничение 255 поддерживается backend.
 - Если оба запроса возвращают 201, фиксируется, что API не применяет предполагаемое ограничение длины.
 
-**Приоритет:** Medium
-
 Это exploratory boundary check: граница 255 не подтверждена требованиями.
 
+</div>
 
+<div class="test-case" markdown>
 
 ## TC-A05. POST /todos: completed = null
 
+<div class="case-tags"><span class="case-tag negative">Negative / Validation</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** Type validation / Negative testing.
 
-
-### Request
-
+### Тестовые данные
 
 ```json
 {
@@ -149,25 +147,23 @@
 }
 ```
 
-
 ### Ожидаемый результат для строгого контракта
 
 - HTTP 400 или 422;
 - Todo с completed = null не создается.
 - Применимо при обязательном boolean-поле completed.
 
-**Приоритет:** High
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-A06. POST /todos: неверный тип completed = "false"
 
+<div class="case-tags"><span class="case-tag negative">Negative / Validation</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** Type validation.
 
-
-### Request
-
+### Тестовые данные
 
 ```json
 {
@@ -177,26 +173,23 @@
 }
 ```
 
-
 ### Ожидаемый результат
 
 - HTTP 400 или 422 для типизированного API;
 - строковое значение "false" не должно интерпретироваться как корректный boolean.
 - Если API возвращает 201, фиксируется отсутствие schema validation.
 
-**Приоритет:** High
+</div>
 
-
-
+<div class="test-case" markdown>
 
 ## TC-A07. POST /todos: клиент передает id = null
 
+<div class="case-tags"><span class="case-tag neutral">Contract / Field ownership</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** Contract / Field ownership testing.
 
-
-### Request
-
+### Тестовые данные
 
 ```json
 {
@@ -207,7 +200,6 @@
 }
 ```
 
-
 ### Ожидаемый результат
 
 - клиентский id = null не должен использоваться как ID созданной задачи;
@@ -215,23 +207,21 @@
 - либо API отклоняет передачу server-managed поля с HTTP 400/422;
 - успешная сущность не должна иметь id = null.
 
-**Приоритет:** High
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-A08. POST /todos: полностью пустой JSON {}
 
+<div class="case-tags"><span class="case-tag negative">Negative / Required fields</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** Negative testing / Required fields validation.
 
-
-### Request
-
+### Тестовые данные
 
 ```json
 {}
 ```
-
 
 ### Ожидаемый результат для продуктового API
 
@@ -240,17 +230,17 @@
 - server-generated id не должен означать создание валидной Todo без title, userId и completed.
 - Если JSONPlaceholder возвращает 201 Created, это фиксируется как существенное ограничение тестового API: обязательные поля и бизнес-контракт на стороне сервера не валидируются.
 
-**Приоритет:** High
+</div>
 
+<div class="test-case" markdown>
 
 ## TC-A09. DELETE /todos/{id} -> GET /todos/{id}: проверка persistence после удаления
 
+<div class="case-tags"><span class="case-tag neutral">Integration / Persistence</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** CRUD consistency, Integration Testing.
 
-
 **Предусловие:** задача с id = 1 доступна через API.
-
 
 ### Шаги
 
@@ -271,17 +261,17 @@
 - задача с id = 1 снова присутствует;
 - userId, id, title, completed соответствуют исходному объекту.
 
-**Приоритет:** High
+</div>
 
+<div class="test-case" markdown>
 
 ## TC-A10. PUT /todos/{id}: изменение completed = false -> true
 
+<div class="case-tags"><span class="case-tag positive">Positive / State transition</span><span class="case-tag priority">Приоритет: Critical</span></div>
 
 **Техника:** State Transition Testing, Contract Testing.
 
-
 **Предусловие:** существует задача:
-
 
 ```json
 {
@@ -291,7 +281,6 @@
   "completed": false
 }
 ```
-
 
 ### Шаги
 
@@ -318,6 +307,4 @@
 - типы всех полей соответствуют контракту;
 - изменено только поле completed.
 
-**Приоритет:** Critical
-
-
+</div>

@@ -1,16 +1,24 @@
 # Фильтрация All / Active / Completed
 
+<div class="suite-summary" markdown>
+
+**All · Active · Completed**
+
+8 кейсов · фильтрация и согласованность состояния
+
+</div>
+
 Проверки состояния интерфейса и соответствующих API-запросов. Переключение фильтров предполагается локальным; это ожидание необходимо сверить с требованиями.
 
+<div class="test-case" markdown>
 
 ## TC-B01. GET /todos: проверка данных, используемых для фильтрации
 
+<div class="case-tags"><span class="case-tag positive">Positive / Consistency</span><span class="case-tag priority">Приоритет: Critical</span></div>
 
 **Техника:** API Contract Testing.
 
-
 **Предусловие:** приложение открывается с чистого состояния.
-
 
 ### Шаги
 
@@ -26,18 +34,17 @@
 - completed имеет тип boolean;
 - список All содержит все объекты из response без потерь и дублей.
 
-**Приоритет:** Critical
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-B02. Фильтр Active по completed = false
 
+<div class="case-tags"><span class="case-tag positive">Positive / Consistency</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** Equivalence Partitioning.
 
-
 **Предусловие:** первоначальный GET завершился HTTP 200 OK и содержит задачи с разными значениями completed.
-
 
 ### Шаги
 
@@ -51,18 +58,17 @@
 - id, userId, title исходных объектов не изменяются;
 - дополнительный GET при переключении фильтра не отправляется.
 
-**Приоритет:** High
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-B03. Фильтр Completed по completed = true
 
+<div class="case-tags"><span class="case-tag positive">Positive / Consistency</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** Equivalence Partitioning.
 
-
 **Предусловие:** первоначальный GET завершился HTTP 200 OK.
-
 
 ### Шаги
 
@@ -76,18 +82,17 @@
 - id, userId, title не изменяются;
 - дополнительный HTTP-запрос не отправляется.
 
-**Приоритет:** High
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-B04. PUT /todos/{id}: переход completed = false -> true
 
+<div class="case-tags"><span class="case-tag positive">Positive / State transition</span><span class="case-tag priority">Приоритет: Critical</span></div>
 
 **Техника:** State Transition Testing.
 
-
 **Предусловие:** задача:
-
 
 ```json
 {
@@ -97,7 +102,6 @@
   "completed": false
 }
 ```
-
 
 ### Шаги
 
@@ -114,18 +118,17 @@
 - появляется в Completed;
 - остается в All в единственном экземпляре.
 
-**Приоритет:** Critical
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-B05. PUT /todos/{id}: обратный переход completed = true -> false
 
+<div class="case-tags"><span class="case-tag positive">Positive / State transition</span><span class="case-tag priority">Приоритет: Critical</span></div>
 
 **Техника:** State Transition Testing.
 
-
 **Предусловие:** задача имеет completed = true.
-
 
 ### Шаги
 
@@ -142,16 +145,15 @@
 - исчезает из Completed;
 - в All остается одна запись с тем же id.
 
-**Приоритет:** Critical
+</div>
 
-
-
+<div class="test-case" markdown>
 
 ## TC-B06. DELETE /todos/{id}: удаление Completed-задачи и консистентность фильтров
 
+<div class="case-tags"><span class="case-tag positive">Positive / Consistency</span><span class="case-tag priority">Приоритет: High</span></div>
 
 **Техника:** CRUD Consistency Testing.
-
 
 ### Предусловие
 
@@ -160,7 +162,6 @@
 completed = true;
 
 задача присутствует в All и Completed.
-
 
 ### Шаги
 
@@ -176,18 +177,17 @@ completed = true;
 - задача отсутствует в Completed;
 - остальные задачи не изменены и не удалены.
 
-**Приоритет:** High
+</div>
 
-
+<div class="test-case" markdown>
 
 ## TC-B07. DELETE -> GET того же id: проверка ограничения JSONPlaceholder
 
+<div class="case-tags"><span class="case-tag neutral">Integration / Persistence</span><span class="case-tag priority">Приоритет: Medium</span></div>
 
 **Техника:** Integration / Persistence Testing.
 
-
 **Предусловие:** существует задача с известным id.
-
 
 ### Шаги
 
@@ -202,19 +202,17 @@ completed = true;
 - исходная задача снова возвращается API.
 - Результат фиксируется как особенность JSONPlaceholder: DELETE имитируется и не сохраняется реально.
 
-**Приоритет:** Medium
+</div>
 
-
-
+<div class="test-case" markdown>
 
 ## TC-B08. Последовательность All -> Active -> Completed -> All не изменяет данные
 
+<div class="case-tags"><span class="case-tag positive">Positive / Consistency</span><span class="case-tag priority">Приоритет: Medium</span></div>
 
 **Техника:** State Consistency Testing.
 
-
 **Предусловие:** GET вернул набор задач с completed = true и false.
-
 
 ### Шаги
 
@@ -230,6 +228,4 @@ completed = true;
 - после возврата в All набор соответствует исходному GET;
 - нет потерянных или продублированных объектов.
 
-**Приоритет:** Medium
-
-
+</div>

@@ -1,26 +1,29 @@
 # Баг-репорты
 
+<div class="suite-summary" markdown>
+
+**3 баг-репорта · Severity: Major**
+
+Идентификаторы задач · сохранение статуса · удаление
+
+</div>
+
 !!! info "Статус материалов"
     Ниже оформлены наблюдения из предоставленного текста. В рамках подготовки этой документации дефекты не воспроизводились; исходный код приложения и перечисленные скриншоты/скринкасты не приложены. Разделы «Вложения» указывают необходимые доказательства.
 
+<div class="test-case bug-report" markdown>
 
-## BUG-001
+## BUG-001 · Несколько созданных задач с одинаковым id приводят к редактированию, изменению статуса и удалению неправильных задач
 
-
-### Заголовок
-
-Несколько созданных задач с одинаковым id приводят к редактированию, изменению статуса и удалению неправильных задач
-
+<div class="case-tags"><span class="case-tag negative">Severity: Major</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">По предоставленным наблюдениям</span></div>
 
 ### Окружение
 
 Google Chrome, macOS, localhost:4200
 
-
 ### Предусловие
 
 Приложение открыто. API JSONPlaceholder доступен.
-
 
 ### Шаги воспроизведения
 
@@ -31,23 +34,25 @@ Google Chrome, macOS, localhost:4200
 1. Изменить completed у одной из созданных задач.
 1. Переключиться между Active, Completed и All.
 
+<div class="result-panel actual" markdown>
+
 ### Фактический результат
 
 - Несколько задач с одинаковым id могут одновременно переходить в режим редактирования. При сохранении обновляется первый элемент массива с совпавшим id, а не обязательно выбранная задача. При изменении completed содержимое задач может дублироваться, а фильтры отображают неконсистентное состояние.
+
+</div>
+
+<div class="result-panel expected" markdown>
 
 ### Ожидаемый результат
 
 - Каждая созданная задача должна иметь уникальный идентификатор на клиенте. Edit и изменение completed должны применяться только к выбранной задаче. Переключение фильтров не должно приводить к появлению дублей или изменению других задач.
 
-### Severity
-
-Major
-
+</div>
 
 ### Почему Major
 
 Основные функции Todo приложения Edit, Complete и Delete работают некорректно для созданных пользователем задач. При этом приложение полностью не блокируется, поэтому Blocker или Critical здесь были бы завышены.
-
 
 ### Вложения
 
@@ -55,23 +60,21 @@ Major
 - Скриншот Network с двумя POST /todos и одинаковым id в response.
 - Скринкаст Edit и переключения Completed -> All.
 
-## BUG-002
+</div>
 
+<div class="test-case bug-report" markdown>
 
-### Заголовок
+## BUG-002 · Статус задачи изменяется в UI при неуспешном PUT /todos/{id}
 
-Статус задачи изменяется в UI при неуспешном PUT /todos/{id}
-
+<div class="case-tags"><span class="case-tag negative">Severity: Major</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">По предоставленным наблюдениям</span></div>
 
 ### Окружение
 
 Google Chrome, macOS, localhost:4200
 
-
 ### Предусловие
 
 В списке присутствует Active задача. DevTools открыт.
-
 
 ### Шаги воспроизведения
 
@@ -80,35 +83,38 @@ Google Chrome, macOS, localhost:4200
 1. Проверить PUT /todos/{id}.
 1. Проверить Active, Completed и All.
 
+<div class="result-panel actual" markdown>
+
 ### Фактический результат
 
 - PUT завершается ошибкой сети, но completed изменяется локально до получения успешного response. Задача может исчезнуть из Active или отображаться как Completed, хотя сервер не подтвердил изменение. Сообщение об ошибке и rollback отсутствуют.
 
+</div>
 
+<div class="result-panel expected" markdown>
 
 ### Ожидаемый результат
 
 - Если PUT не выполнен успешно, приложение не должно отображать изменение как сохраненное. Предыдущее значение completed должно быть восстановлено либо пользователь должен получить понятное состояние ошибки.
 
-### Severity
-
-Major
-
+</div>
 
 ### Вложения
 
 - Network с failed PUT.
 - Скриншот задачи после неуспешного запроса.
 
+</div>
+
+<div class="test-case bug-report" markdown>
 
 ## BUG-003. Удаление задачи завершается HTTP 500 и задача остается в списке
 
+<div class="case-tags"><span class="case-tag negative">Severity: Major</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">По предоставленным наблюдениям</span></div>
 
 **Окружение:** Google Chrome, macOS, http://localhost:4200
 
-
 **Предусловие:** в списке существует задача, доступная для удаления.
-
 
 ### Шаги воспроизведения
 
@@ -117,28 +123,29 @@ Major
 1. В DevTools открыть Network > Найти DELETE /todos/{id}.
 1. Проверить status code и Console.
 
+<div class="result-panel actual" markdown>
+
 ### Фактический результат
 
 - сервер возвращает HTTP 500 Internal Server Error;
 - в Console появляется HttpErrorResponse;
 
+</div>
+
+<div class="result-panel expected" markdown>
+
 ### Ожидаемый результат
 
 - DELETE должен завершаться ожидаемым успешным статусом, для JSONPlaceholder обычно 200 OK;
-- Severity: Major
+
+</div>
 
 ### Вложения
 
 - скриншот Network с DELETE /todos/{id} и 500;
 - скриншот Console с HttpErrorResponse.
 
-
-
-
-
-
-
-
-
 !!! note "Уточнение для BUG-003"
     HTTP 500 сам по себе не устанавливает причину ошибки. Для воспроизведения нужно зафиксировать фактический ID, URL и тело ответа, а также сравнить удаление исходной и вновь созданной задачи. Обработка ошибки в UI проверяется отдельно от доступности внешнего API.
+
+</div>
