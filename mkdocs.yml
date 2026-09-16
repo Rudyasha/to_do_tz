@@ -32,8 +32,8 @@ nav:
   - Обзор: index.md
   - 1. Приоритеты и риски: task-1.md
   - 2. План Infinite Scroll: task-2.md
-  - 3. API-сценарии: task-3.md
-  - 4. Фильтрация: task-4.md
+  - 3. Тест кейсы для Сценария А: task-3.md
+  - 4. Тест кейсы для Сценария Б: task-4.md
   - 5. Баг-репорты: task-5.md
 plugins:
   - search:
