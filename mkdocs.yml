@@ -29,7 +29,6 @@ theme:
     - search.suggest
     - content.code.copy
 nav:
-  - Обзор: index.md
   - 1. Приоритеты и риски: task-1.md
   - 2. План Infinite Scroll: task-2.md
   - 3. Тест кейсы для Сценария А: task-3.md
