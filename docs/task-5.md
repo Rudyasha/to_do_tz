@@ -2,14 +2,14 @@
 
 <div class="suite-summary" markdown>
 
-**3 баг-репорта · 1 Critical · 2 Major**
+**3 баг-репорта · 2 Critical · 1 Major**
 
-Обновление новой задачи · сохранение статуса · удаление
+Обновление новой задачи · одинаковые идентификаторы · удаление
 
 </div>
 
 !!! info "Статус материалов"
-    Ниже оформлены наблюдения из предоставленного текста. В рамках подготовки этой документации дефекты не воспроизводились; к BUG-001 приложен предоставленный скриншот. Исходный код приложения и вложения к BUG-002 и BUG-003 не предоставлены.
+    Ниже оформлены наблюдения из предоставленного текста. В рамках подготовки этой документации дефекты не воспроизводились; к BUG-001 и BUG-002 приложены предоставленные скриншоты. Исходный код приложения и вложения к BUG-003 не предоставлены.
 
 <div class="test-case bug-report" markdown>
 
@@ -79,30 +79,33 @@ x-powered-by: Express
 
 <div class="test-case bug-report" markdown>
 
-## BUG-002 · Статус задачи изменяется в UI при неуспешном PUT /todos/{id}
+## BUG-002 · POST /todos возвращает одинаковый `id=201` для разных созданных задач
 
-<div class="case-tags"><span class="case-tag negative">Severity: Major</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">По предоставленным наблюдениям</span></div>
+<div class="case-tags"><span class="case-tag negative">Severity: Critical</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">POST /todos · id=201</span></div>
 
 ### Окружение
 
-Google Chrome, macOS, localhost:4200
+Google Chrome, macOS, `localhost:4200`
 
 ### Предусловие
 
-В списке присутствует Active задача. DevTools открыт.
+Приложение открыто, JSONPlaceholder доступен.
 
 ### Шаги воспроизведения
 
-1. Открыть фильтр Active > В DevTools переключить Network в Offline.
-1. Установить checkbox у Active задачи.
-1. Проверить PUT /todos/{id}.
-1. Проверить Active, Completed и All.
+1. Создать задачу с `title = "Task A"`.
+2. Проверить response `POST /todos` → сохранить полученный `id`.
+3. Создать задачу с `title = "Task B"` → проверить response `POST /todos`.
+4. Сравнить `id` созданных задач.
+5. Попробовать изменить `title` или `completed` одной из них.
 
 <div class="result-panel actual" markdown>
 
 ### Фактический результат
 
-- PUT завершается ошибкой сети, но completed изменяется локально до получения успешного response. Задача может исчезнуть из Active или отображаться как Completed, хотя сервер не подтвердил изменение. Сообщение об ошибке и rollback отсутствуют.
+- Обе разные задачи получают одинаковый `id = 201`;
+- frontend хранит несколько различных объектов с одинаковым идентификатором;
+- последующие Edit / Complete / Delete определяют задачу по `id`, поэтому операция не может однозначно определить нужный объект.
 
 </div>
 
@@ -110,14 +113,32 @@ Google Chrome, macOS, localhost:4200
 
 ### Ожидаемый результат
 
-- Если PUT не выполнен успешно, приложение не должно отображать изменение как сохраненное. Предыдущее значение completed должно быть восстановлено либо пользователь должен получить понятное состояние ошибки.
+- Каждая отдельная таска на клиенте должна иметь уникальный id;
+- Update/Delete должны однозначно применяться только к выбранной таске.
 
 </div>
 
 ### Вложения
 
-- Network с failed PUT.
-- Скриншот задачи после неуспешного запроса.
+<div class="attachment-gallery" markdown>
+
+<figure class="bug-attachment" markdown>
+
+[![Chrome DevTools: список запросов к ресурсу 201](assets/images/bug-002-network-201.png)](assets/images/bug-002-network-201.png){ target="_blank" rel="noopener" }
+
+<figcaption><strong>01 · Network</strong><br>Запросы к ресурсу с идентификатором 201.</figcaption>
+</figure>
+
+<figure class="bug-attachment" markdown>
+
+[![JSON response с полями title, completed, userId и id: 201](assets/images/bug-002-response-201.png)](assets/images/bug-002-response-201.png){ target="_blank" rel="noopener" }
+
+<figcaption><strong>02 · Response</strong><br>Объект задачи с <code>id: 201</code>.</figcaption>
+</figure>
+
+</div>
+
+<p class="attachment-hint">Нажмите на любой скриншот, чтобы открыть его в полном размере.</p>
 
 </div>
 
