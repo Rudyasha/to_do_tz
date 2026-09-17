@@ -2,14 +2,14 @@
 
 <div class="suite-summary" markdown>
 
-**3 баг-репорта · 2 Critical · 1 Major**
+**3 баг-репорта · 3 Critical**
 
-Обновление новой задачи · одинаковые идентификаторы · удаление
+Обновление новой задачи · одинаковые идентификаторы · откат статуса
 
 </div>
 
 !!! info "Статус материалов"
-    Ниже оформлены наблюдения из предоставленного текста. В рамках подготовки этой документации дефекты не воспроизводились; к BUG-001 и BUG-002 приложены предоставленные скриншоты. Исходный код приложения и вложения к BUG-003 не предоставлены.
+    Ниже оформлены наблюдения из предоставленного текста. В рамках подготовки этой документации дефекты не воспроизводились; ко всем трём баг-репортам приложены предоставленные скриншоты. Исходный код приложения не предоставлен.
 
 <div class="test-case bug-report" markdown>
 
@@ -144,27 +144,29 @@ Google Chrome, macOS, `localhost:4200`
 
 <div class="test-case bug-report" markdown>
 
-## BUG-003. Удаление задачи завершается HTTP 500 и задача остается в списке
+## BUG-003 · UI изменяет completed до успешного PUT и не откатывает состояние при ошибке
 
-<div class="case-tags"><span class="case-tag negative">Severity: Major</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">По предоставленным наблюдениям</span></div>
+<div class="case-tags"><span class="case-tag negative">Severity: Critical</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">completed · PUT · HTTP 500</span></div>
 
-**Окружение:** Google Chrome, macOS, http://localhost:4200
+### Окружение
 
-**Предусловие:** в списке существует задача, доступная для удаления.
+Google Chrome, macOS, `localhost:4200`
 
 ### Шаги воспроизведения
 
-1. Открыть приложение > Создать задачу
-1. Нажать Delete у задачи.
-1. В DevTools открыть Network > Найти DELETE /todos/{id}.
-1. Проверить status code и Console.
+1. Открыть Active → установить checkbox у таски.
+2. Проверить `PUT /todos/{id}`.
+3. После HTTP 500 переключиться между Active, Completed и All.
 
 <div class="result-panel actual" markdown>
 
 ### Фактический результат
 
-- сервер возвращает HTTP 500 Internal Server Error;
-- в Console появляется HttpErrorResponse;
+- Поле completed изменяется локально до получения успешного ответа API;
+- PUT завершается HTTP 500;
+- UI может показывать задачу как Completed, несмотря на неуспешный Update;
+- задача может некорректно переходить между фильтрами;
+- сообщение об ошибке пользователю отсутствует.
 
 </div>
 
@@ -172,16 +174,28 @@ Google Chrome, macOS, `localhost:4200`
 
 ### Ожидаемый результат
 
-- DELETE должен завершаться ожидаемым успешным статусом, для JSONPlaceholder обычно 200 OK;
+- Изменение статуса должно считаться сохранённым только после успешного ответа API;
+- при ошибке PUT предыдущее значение completed должно быть восстановлено либо явно показана ошибка;
+- задача должна оставаться в фильтре, соответствующем фактически сохранённому состоянию.
 
 </div>
 
 ### Вложения
 
-- скриншот Network с DELETE /todos/{id} и 500;
-- скриншот Console с HttpErrorResponse.
+<figure class="bug-attachment attachment-detail" markdown>
 
-!!! note "Уточнение для BUG-003"
-    HTTP 500 сам по себе не устанавливает причину ошибки. Для воспроизведения нужно зафиксировать фактический ID, URL и тело ответа, а также сравнить удаление исходной и вновь созданной задачи. Обработка ошибки в UI проверяется отдельно от доступности внешнего API.
+[![Фрагмент данных: completed имеет значение true](assets/images/bug-003-completed-true.png)](assets/images/bug-003-completed-true.png){ target="_blank" rel="noopener" }
+
+<figcaption><strong>01 · Значение completed</strong><br>В предоставленном фрагменте данных — <code>completed: true</code>.</figcaption>
+</figure>
+
+<figure class="bug-attachment" markdown>
+
+[![Отмеченная задача в UI и PUT /todos/201 с ответом 500 Internal Server Error в Network](assets/images/bug-003-ui-put-500.png)](assets/images/bug-003-ui-put-500.png){ target="_blank" rel="noopener" }
+
+<figcaption><strong>02 · UI и Network</strong><br>Задача отмечена выполненной, при этом PUT /todos/201 возвращает HTTP 500.</figcaption>
+</figure>
+
+<p class="attachment-hint">Нажмите на любой скриншот, чтобы открыть его в полном размере.</p>
 
 </div>

@@ -61,3 +61,6 @@
 .md-typeset .attachment-gallery .bug-attachment img { height: 280px; object-fit: contain; }
 .md-typeset .attachment-hint { color: var(--md-default-fg-color--light); font-size: .68rem; }
 @media (max-width: 600px) { .md-typeset .attachment-gallery { grid-template-columns: 1fr; } }
+
+.md-typeset .attachment-detail > p { padding: 1rem; background: #fff; }
+.md-typeset .attachment-detail img { width: auto; max-width: 100%; margin: 0 auto; }
