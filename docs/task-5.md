@@ -2,63 +2,78 @@
 
 <div class="suite-summary" markdown>
 
-**3 баг-репорта · Severity: Major**
+**3 баг-репорта · 1 Critical · 2 Major**
 
-Идентификаторы задач · сохранение статуса · удаление
+Обновление новой задачи · сохранение статуса · удаление
 
 </div>
 
 !!! info "Статус материалов"
-    Ниже оформлены наблюдения из предоставленного текста. В рамках подготовки этой документации дефекты не воспроизводились; исходный код приложения и перечисленные скриншоты/скринкасты не приложены. Разделы «Вложения» указывают необходимые доказательства.
+    Ниже оформлены наблюдения из предоставленного текста. В рамках подготовки этой документации дефекты не воспроизводились; к BUG-001 приложен предоставленный скриншот. Исходный код приложения и вложения к BUG-002 и BUG-003 не предоставлены.
 
 <div class="test-case bug-report" markdown>
 
-## BUG-001 · Несколько созданных задач с одинаковым id приводят к редактированию, изменению статуса и удалению неправильных задач
+## BUG-001 · PUT новой таски возвращает 500, Edit и Complete не работают
 
-<div class="case-tags"><span class="case-tag negative">Severity: Major</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">По предоставленным наблюдениям</span></div>
+<div class="case-tags"><span class="case-tag negative">Severity: Critical</span><span class="case-tag">Chrome · macOS</span><span class="case-tag neutral">PUT /todos/201</span></div>
 
 ### Окружение
 
-Google Chrome, macOS, localhost:4200
+Google Chrome, macOS, `localhost:4200`
 
 ### Предусловие
 
-Приложение открыто. API JSONPlaceholder доступен.
+Приложение открыто, API JSONPlaceholder доступен.
 
 ### Шаги воспроизведения
 
-1. Создать задачу с title = "Task A".
-1. Создать задачу с title = "Task B".
-1. В Network проверить responses POST /todos и убедиться, что обе задачи получили одинаковый id.
-1. Нажать Edit у Task A и изменить title > Сохранить изменения.
-1. Изменить completed у одной из созданных задач.
-1. Переключиться между Active, Completed и All.
+1. Создать новую задачу, например с `title = "Test task"`.
+2. Убедиться, что `POST /todos` завершился успешно и в response получен новый id таски.
+3. Кликнуть Edit у созданной задачи → изменить title → Save.
+4. Проверить Network / Console.
 
 <div class="result-panel actual" markdown>
 
 ### Фактический результат
 
-- Несколько задач с одинаковым id могут одновременно переходить в режим редактирования. При сохранении обновляется первый элемент массива с совпавшим id, а не обязательно выбранная задача. При изменении completed содержимое задач может дублироваться, а фильтры отображают неконсистентное состояние.
+- Отправляется `PUT /todos/{id новой таски}`;
+- сервер возвращает `HTTP 500 Internal Server Error`;
+- изменение title не сохраняется корректно;
+- аналогичная ошибка возникает при изменении completed у созданной задачи;
+- в Console отображается `HttpErrorResponse`;
+- response имеет `Content-Type: text/html; charset=utf-8`, а не структурированный JSON error response.
 
 </div>
+
+### Дополнительные данные
+
+```yaml
+access-control-allow-origin: http://localhost:4200
+x-ratelimit-remaining: 995
+x-powered-by: Express
+```
+
+**Вывод:** запрос доходит до backend, ошибка не связана с CORS или rate limit и возникает при серверной обработке `PUT /todos/201`.
 
 <div class="result-panel expected" markdown>
 
 ### Ожидаемый результат
 
-- Каждая созданная задача должна иметь уникальный идентификатор на клиенте. Edit и изменение completed должны применяться только к выбранной задаче. Переключение фильтров не должно приводить к появлению дублей или изменению других задач.
+- Созданная задача должна поддерживать последующий Update;
+- `PUT /todos/{id}` должен завершаться успешным ответом;
+- обновлённые данные должны применяться к выбранной таске;
+- при ошибке API пользователь должен получить корректное состояние ошибки.
 
 </div>
 
-### Почему Major
-
-Основные функции Todo приложения Edit, Complete и Delete работают некорректно для созданных пользователем задач. При этом приложение полностью не блокируется, поэтому Blocker или Critical здесь были бы завышены.
-
 ### Вложения
 
-- Скриншот списка с дублирующимися задачами.
-- Скриншот Network с двумя POST /todos и одинаковым id в response.
-- Скринкаст Edit и переключения Completed -> All.
+<figure class="bug-attachment" markdown>
+
+[![Список задач и Chrome DevTools: PUT /todos/201 возвращает 500 Internal Server Error](assets/images/bug-001-put-500.png)](assets/images/bug-001-put-500.png){ target="_blank" rel="noopener" }
+
+<figcaption>BUG-001 · Ошибка PUT /todos/201 в Network<br>Нажмите на скриншот, чтобы открыть в полном размере.</figcaption>
+</figure>
 
 </div>
 

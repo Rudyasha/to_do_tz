@@ -46,3 +46,10 @@
 [data-md-color-scheme="slate"] .md-typeset .case-tag.priority { color: #f4d38b; background: #403820; }
 [data-md-color-scheme="slate"] .md-typeset .case-tag.neutral { color: #b5d9ff; background: #26394b; }
 @media (max-width: 600px) { .md-typeset .result-panel { padding: .7rem; } }
+
+.md-typeset figure.bug-attachment { display: block; width: 100%; max-width: 100%; margin: 1rem 0 0; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 10px; overflow: hidden; background: var(--md-code-bg-color); }
+.md-typeset .bug-attachment p { margin: 0; }
+.md-typeset .bug-attachment a { display: block; cursor: zoom-in; }
+.md-typeset .bug-attachment a:focus-visible { outline: 3px solid var(--md-accent-fg-color); outline-offset: -3px; }
+.md-typeset .bug-attachment img { display: block; width: 100%; height: auto; }
+.md-typeset .bug-attachment figcaption { max-width: none; margin: 0; padding: .7rem 1rem; color: var(--md-default-fg-color--light); font-size: .68rem; font-style: normal; text-align: left; }
